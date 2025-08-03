@@ -41,7 +41,6 @@ export const I18nSwiper = (field = '') => $t(`page.features.swiper${field ? '.' 
 export const I18nVueDirective = (field = '') => $t(`page.features.vue-directive${field ? '.' : ''}${field}`);
 
 /** @description: 功能页-文件预览 */
-export const I18nVueOffice = (field = '') => $t(`page.features.vue-office${field ? '.' : ''}${field}`);
 
 /** @description: 功能页-瀑布流 */
 export const I18nWaterfall = (field = '') => $t(`page.features.waterfall${field ? '.' : ''}${field}`);

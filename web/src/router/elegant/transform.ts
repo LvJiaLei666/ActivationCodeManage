@@ -185,7 +185,6 @@ const routeMap: RouteMap = {
   "features_swiper": "/features/swiper",
   "features_viewer": "/features/viewer",
   "features_vue-directive": "/features/vue-directive",
-  "features_vue-office": "/features/vue-office",
   "features_waterfall": "/features/waterfall",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",

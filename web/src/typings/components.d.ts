@@ -69,7 +69,6 @@ declare module 'vue' {
     ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
-    AUpload: typeof import('ant-design-vue/es')['Upload']
     BetterScroll: typeof import('./../components/custom/better-scroll.vue')['default']
     ButtonIcon: typeof import('./../components/custom/button-icon.vue')['default']
     ColorPicker: typeof import('./../components/custom/color-picker.vue')['default']

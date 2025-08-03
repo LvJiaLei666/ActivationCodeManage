@@ -1,7 +1,7 @@
 # 多阶段构建 Dockerfile
 
 # 阶段1: 构建前端
-FROM node:18-alpine AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 
 # 设置工作目录
 WORKDIR /app/web
@@ -25,7 +25,7 @@ COPY web/ .
 RUN pnpm run build
 
 # 阶段2: 构建后端
-FROM node:18-alpine AS backend-builder
+FROM node:20-alpine AS backend-builder
 
 # 设置工作目录
 WORKDIR /app/server
@@ -49,7 +49,7 @@ RUN npx prisma generate
 RUN pnpm run build
 
 # 阶段3: 生产环境镜像
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # 安装必要的系统依赖
 RUN apk add --no-cache nginx

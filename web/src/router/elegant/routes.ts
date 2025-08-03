@@ -237,15 +237,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'features_vue-office',
-        path: '/features/vue-office',
-        component: 'view.features_vue-office',
-        meta: {
-          title: 'features_vue-office',
-          i18nKey: 'route.features_vue-office'
-        }
-      },
-      {
         name: 'features_waterfall',
         path: '/features/waterfall',
         component: 'view.features_waterfall',
