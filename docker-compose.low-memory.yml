@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # PostgreSQL 数据库
+  # PostgreSQL 数据库 - 低内存优化配置
   postgres:
     image: postgres:15-alpine
     container_name: vue3-admin-postgres
@@ -10,6 +10,22 @@ services:
       POSTGRES_DB: vue3_admin
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123456}
+      # 低内存优化配置
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    command: |
+      postgres
+      -c shared_buffers=64MB
+      -c effective_cache_size=256MB
+      -c maintenance_work_mem=32MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=4MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=2MB
+      -c min_wal_size=1GB
+      -c max_wal_size=2GB
+      -c max_connections=50
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgreSQL:/docker-entrypoint-initdb.d
@@ -22,8 +38,17 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.3'
 
-  # 主应用服务（前端 + 后端）
+  # 主应用服务 - 低内存优化配置
   app:
     build:
       context: .
@@ -35,7 +60,10 @@ services:
       - "6666:6666"
     environment:
       - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=512
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-123456}@postgres:5432/vue3_admin
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-key-here}
+      - SESSION_SECRET=${SESSION_SECRET:-your-session-secret-key-here}
     volumes:
       - ./server/upload:/app/server/upload
       - app_logs:/app/logs
@@ -46,9 +74,19 @@ services:
       - vue3-admin-network
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6666/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 45s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: '1.5'
+        reservations:
+          memory: 384M
+          cpus: '0.5'
 
 networks:
   vue3-admin-network:

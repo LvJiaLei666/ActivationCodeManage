@@ -1,6 +1,6 @@
 # Vue3-Admin Docker 部署指南
 
-本项目提供了完整的 Docker 化部署方案，包含前端（Vue3）、后端（NestJS）和数据库（PostgreSQL + Redis）服务。
+本项目提供了完整的 Docker 化部署方案，包含前端（Vue3）、后端（NestJS）和数据库（PostgreSQL）服务。
 
 ## 🚀 快速开始
 
@@ -47,7 +47,6 @@ docker-compose logs -f app
 - **后端API**: http://localhost:6666
 - **Swagger文档**: http://localhost/docs
 - **数据库**: localhost:5432
-- **Redis**: localhost:6379
 
 ## 📁 项目结构
 
@@ -74,11 +73,6 @@ vue3-admin/
 - **端口**: 5432
 - **数据卷**: postgres_data
 - **初始化**: 自动执行 postgreSQL/ 目录下的 SQL 文件
-
-### 缓存服务 (redis)
-- **镜像**: redis:7-alpine
-- **端口**: 6379
-- **数据卷**: redis_data
 
 ## 🔧 常用命令
 
@@ -178,7 +172,6 @@ docker-compose logs
 # 查看特定服务日志
 docker-compose logs app
 docker-compose logs postgres
-docker-compose logs redis
 
 # 实时跟踪日志
 docker-compose logs -f --tail=100 app
@@ -199,9 +192,6 @@ curl http://localhost:6666/health
 
 # 数据库健康检查
 docker-compose exec postgres pg_isready -U postgres
-
-# Redis健康检查
-docker-compose exec redis redis-cli ping
 ```
 
 ### 数据持久化
@@ -209,7 +199,6 @@ docker-compose exec redis redis-cli ping
 项目使用 Docker 卷持久化数据：
 
 - `postgres_data`: PostgreSQL 数据
-- `redis_data`: Redis 数据
 - `app_logs`: 应用日志
 - `./server/upload`: 上传文件
 
@@ -223,8 +212,8 @@ docker-compose exec redis redis-cli ping
 
 2. **性能优化**
    - 调整数据库配置
-   - 配置Redis持久化策略
    - 设置Nginx缓存策略
+   - 优化Node.js内存使用
    - 监控资源使用情况
 
 3. **备份策略**
@@ -240,5 +229,5 @@ docker-compose exec redis redis-cli ping
 ## 📝 更新日志
 
 - v1.0.0: 初始版本，支持基础Docker部署
-- 支持的服务：Vue3前端、NestJS后端、PostgreSQL、Redis
+- 支持的服务：Vue3前端、NestJS后端、PostgreSQL
 - 自动化部署和健康检查 
