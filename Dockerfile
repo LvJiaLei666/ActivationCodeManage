@@ -16,7 +16,7 @@ COPY web/package.json web/pnpm-lock.yaml ./
 COPY web/packages ./packages
 
 # 安装前端依赖
-RUN pnpm install --frozen-lockfile
+RUN pnpm install 
 
 # 复制前端源代码
 COPY web/ .
@@ -37,7 +37,7 @@ RUN npm install -g pnpm
 COPY server/package.json server/pnpm-lock.yaml ./
 
 # 安装后端依赖
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # 复制后端源代码
 COPY server/ .

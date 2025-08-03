@@ -7,7 +7,8 @@
 
 # 构建输出
 **/dist
-**/build
+# 注意：保留 web/build 目录（Vite 配置文件）
+server/build
 **/.next
 **/.nuxt
 **/.vuepress/dist
@@ -43,11 +44,13 @@
 **/.yarn-integrity
 
 # dotenv环境变量文件
-**/.env
+# 保留构建和运行需要的环境变量文件
+# **/.env
 **/.env.local
 **/.env.development.local
 **/.env.test.local
 **/.env.production.local
+# 注意：在生产环境中，应通过 docker-compose 或环境变量注入来设置敏感信息
 
 # parcel-bundler缓存目录
 **/.cache

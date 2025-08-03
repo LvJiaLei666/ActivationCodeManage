@@ -36,6 +36,8 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-123456}@postgres:5432/vue3_admin
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-key-here}
+      - SESSION_SECRET=${SESSION_SECRET:-your-session-secret-key-here}
     volumes:
       - ./server/upload:/app/server/upload
       - app_logs:/app/logs
