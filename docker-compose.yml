@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: vue3-admin-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vue3_admin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123456}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgreSQL:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - vue3-admin-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: vue3-admin-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - vue3-admin-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 主应用服务（前端 + 后端）
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vue3-admin-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "6666:6666"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-123456}@postgres:5432/vue3_admin
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./server/upload:/app/server/upload
+      - app_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vue3-admin-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6666/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  vue3-admin-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local 

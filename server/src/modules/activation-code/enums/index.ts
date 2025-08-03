@@ -1,0 +1,8 @@
+// 激活码类型 1天KEY 15天KEY 30天KEY 182天KEY 365天KEY
+export enum ACTIVATION_CODE_TYPE {
+  DAY_1 = 1,
+  DAY_15 = 15,
+  DAY_30 = 30,
+  DAY_182 = 182,
+  DAY_365 = 365,
+}
