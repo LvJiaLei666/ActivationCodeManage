@@ -30,8 +30,10 @@ const bgColor = computed(() => {
 const { formRef, validate } = useAntdForm();
 
 const model: Api.Auth.LoginParams = reactive({
-  userName: 'Admin',
-  password: 'abc123456',
+  // userName: 'Admin',
+  // password: 'abc123456',
+  userName: '',
+  password: '',
   captchaCode: '',
 });
 

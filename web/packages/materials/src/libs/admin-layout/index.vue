@@ -210,7 +210,7 @@ function handleClickMask() {
       </main>
 
       <!-- Footer -->
-      <template v-if="showFooter">
+      <!-- <template v-if="showFooter">
         <footer
           v-show="!fullContent"
           class="flex-shrink-0"
@@ -229,7 +229,7 @@ function handleClickMask() {
           class="flex-shrink-0 overflow-hidden"
           :class="[style['layout-footer-placement']]"
         ></div>
-      </template>
+      </template> -->
     </div>
   </div>
 </template>

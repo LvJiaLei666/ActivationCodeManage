@@ -15,6 +15,7 @@ import {
   refundActivationCode,
   revokeActivationCode,
 } from '@/service/api';
+import { useAuthStore } from '@/store/modules/auth';
 
 import ExportModal from './modules/export-modal.vue';
 import HeaderSearch from './modules/header-search.vue';
@@ -29,6 +30,8 @@ const activationCodeTypeOptions = [
   { label: '182天KEY', value: 182 },
   { label: '365天KEY', value: 365 },
 ];
+
+const { userInfo } = useAuthStore();
 
 // 获取激活码类型标签颜色
 const getTypeTagColor = (type: number) => {
@@ -143,11 +146,7 @@ const {
       align: 'center',
       width: 120,
       customRender: ({ text, record }) => (
-        <Button
-          type={text ? 'primary' : 'default'}
-          size="small"
-          onClick={() => handleActivate(record)}
-        >
+        <Button type={text ? 'primary' : 'default'} size="small" onClick={() => handleActivate(record)}>
           {text ? '取消激活' : '点击激活'}
         </Button>
       ),
@@ -247,27 +246,47 @@ const {
 
 const { checkedRowKeys, onDeleted } = useTableOperate(data, getData);
 
+const toastMessage = (message: string, type: 'success' | 'error' = 'success') => {
+  window.$message?.[type](message);
+};
+
 /** @description: 删除激活码 */
-const handleDelete = async (id: string) =>
+const handleDelete = async (id: string) => {
+  if (!userInfo.buttons.includes('activation-code:delete')) {
+    toastMessage('您没有删除权限', 'error');
+    return;
+  }
+
   await delActivationCode({ id }).then(({ error }) => {
     if (!error) {
       onDeleted();
-      window.$message?.success('删除成功');
+      toastMessage('删除成功');
     }
   });
+};
 
 /** @description: 激活码激活/取消激活 */
 const handleActivate = async (record: Api.ActivationCode.ActivationCode) => {
+  if (!userInfo.buttons.includes('activation-code:activate')) {
+    toastMessage('您没有激活权限', 'error');
+    return;
+  }
+
   await activateActivationCode(record.id).then(({ error }) => {
     if (!error) {
       getData();
-      window.$message?.success(record.activated ? '已取消激活' : '激活成功');
+      toastMessage(record.activated ? '已取消激活' : '激活成功');
     }
   });
 };
 
 /** @description: 激活码退款/取消退款 */
 const handleRefund = (record: Api.ActivationCode.ActivationCode) => {
+  if (!userInfo.buttons.includes('activation-code:refund')) {
+    toastMessage('您没有退款权限', 'error');
+    return;
+  }
+
   if (!record.activated) return;
 
   // 设置当前操作的记录
@@ -285,6 +304,7 @@ const handleRefund = (record: Api.ActivationCode.ActivationCode) => {
 
 /** @description: 确认退款/取消退款 */
 const confirmRefund = async (refundNote: string) => {
+  if (!userInfo.buttons.includes('activation-code:refund')) return;
   if (!refundingRecord.value) return;
 
   const isRefunded = refundingRecord.value.refunded;
@@ -294,19 +314,24 @@ const confirmRefund = async (refundNote: string) => {
       getData();
       refundModalVisible.value = false;
       refundingRecord.value = null;
-      window.$message?.success(isRefunded ? '已取消退款' : '退款成功');
+      toastMessage(isRefunded ? '已取消退款' : '退款成功');
     }
   });
 };
 
 /** @description: 激活码收回/取消收回 */
 const handleRevoke = async (record: Api.ActivationCode.ActivationCode) => {
+  if (!userInfo.buttons.includes('activation-code:revoke')) {
+    toastMessage('您没有收回权限', 'error');
+    return;
+  }
+
   if (!record.activated) return;
 
   await revokeActivationCode(record.id).then(({ error }) => {
     if (!error) {
       getData();
-      window.$message?.success(record.revoked ? '已取消收回' : '收回成功');
+      toastMessage(record.revoked ? '已取消收回' : '收回成功');
     }
   });
 };
@@ -355,13 +380,22 @@ const getRowClassName = (record: Api.ActivationCode.ActivationCode, _index: numb
     </template>
     <template #extra>
       <div class="flex gap-12px">
-        <Button type="primary" class="flex flex-center" @click="handleImport">
+        <Button
+          :disabled="!userInfo.buttons.includes('activation-code:import')"
+          type="primary"
+          class="flex flex-center"
+          @click="handleImport"
+        >
           <template #icon>
             <SvgIcon icon="carbon:cloud-upload" class="mr-4px" />
           </template>
           数据导入
         </Button>
-        <Button class="flex flex-center" @click="handleExport">
+        <Button
+          :disabled="!userInfo.buttons.includes('activation-code:export')"
+          class="flex flex-center"
+          @click="handleExport"
+        >
           <template #icon>
             <SvgIcon icon="carbon:cloud-download" class="mr-4px" />
           </template>

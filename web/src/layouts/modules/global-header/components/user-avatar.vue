@@ -42,13 +42,15 @@ function logout() {
     </ButtonIcon>
     <template #overlay>
       <AMenu>
-        <AMenuItem @click="routerPushByKey('user-center')">
+        <!--
+ <AMenuItem @click="routerPushByKey('user-center')">
           <div class="flex-center gap-8px">
             <SvgIcon icon="ri:id-card-line" class="text-icon" />
             {{ $t('route.user-center') }}
           </div>
         </AMenuItem>
-        <AMenuDivider />
+-->
+        <!-- <AMenuDivider /> -->
         <AMenuItem @click="logout">
           <div class="flex-center gap-8px">
             <SvgIcon icon="ph:sign-out" class="text-icon" />

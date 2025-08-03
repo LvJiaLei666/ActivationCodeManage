@@ -34,7 +34,7 @@ export function setupLoading() {
       ${dot}
     </div>
   </div>
-  <h2 class="text-28px font-500 text-#646464">Vue3 Admin</h2>
+  <h2 class="text-28px font-500 text-#646464">激活码管理系统</h2>
 </div>`;
 
   const app = document.getElementById('app');
