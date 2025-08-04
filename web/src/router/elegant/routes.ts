@@ -120,6 +120,15 @@ export const generatedRoutes: GeneratedRoute[] = [
     ]
   },
   {
+    name: 'code-type',
+    path: '/code-type',
+    component: 'layout.base$view.code-type',
+    meta: {
+      title: 'code-type',
+      i18nKey: 'route.code-type'
+    }
+  },
+  {
     name: 'features',
     path: '/features',
     component: 'layout.base',

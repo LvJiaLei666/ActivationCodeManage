@@ -9,10 +9,10 @@ import { RESPONSE_MSG } from '@/enums';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { responseMessage } from '@/utils';
 
+import { BatchImportActivationCodeArrayDto } from './dto/batch-import-activation-code.dto';
 import { ExportActivationCodeDto } from './dto/export-activation-code.dto';
 import { ActivationCodeParamsDto } from './dto/params-activation-code.dto';
 import { SaveActivationCodeDto } from './dto/save-activation-code.dto';
-import { ACTIVATION_CODE_TYPE } from './enums';
 
 @Injectable()
 export class ActivationCodeService {
@@ -324,13 +324,28 @@ export class ActivationCodeService {
   /**
    * @description: 批量导入激活码
    */
-  async batchImport(codes: { code: string; type: ACTIVATION_CODE_TYPE; dataDate: string }[]) {
+  async batchImport(codes: BatchImportActivationCodeArrayDto) {
     try {
-      const data = codes.map((item) => ({
-        ...item,
-        dataDate: new Date(item.dataDate),
-        importedAt: new Date(),
-      }));
+      const data = codes.map((item) => {
+        // 验证至少有一个类型字段
+        if (!item.type && !item.typeId) {
+          throw new Error(`激活码 ${item.code} 必须提供 type 或 typeId`);
+        }
+
+        const baseData = {
+          code: item.code,
+          type: item.type || 0, // 确保 type 字段始终有值（Prisma 要求）
+          dataDate: new Date(item.dataDate),
+          importedAt: new Date(),
+        };
+
+        // 如果提供了新的 typeId，则添加关联
+        if (item.typeId) {
+          return { ...baseData, typeId: item.typeId };
+        }
+
+        return baseData;
+      });
 
       const result = await this.prisma.activationCode.createMany({
         data,
@@ -339,6 +354,9 @@ export class ActivationCodeService {
 
       return responseMessage({ count: result.count }, `成功导入 ${result.count} 个激活码`);
     } catch (error) {
+      if (error.message) {
+        return responseMessage(null, error.message, -1);
+      }
       return responseMessage(error, RESPONSE_MSG.ERROR, -1);
     }
   }

@@ -3,6 +3,7 @@ export * from './administrative/message';
 export * from './administrative/organization';
 export * from './administrative/post-manage';
 export * from './auth';
+export * from './code-type';
 export * from './route';
 export * from './system-manage/internalization';
 export * from './system-manage/menu-manage';

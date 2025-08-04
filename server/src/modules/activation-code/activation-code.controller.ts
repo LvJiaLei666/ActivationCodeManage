@@ -21,12 +21,12 @@ import { ApiBearerAuth, ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from '
 import { LoggerInterceptor } from '@/interceptor/logger.interceptor';
 
 import { ActivationCodeService } from './activation-code.service';
+import { BatchImportActivationCodeArrayDto } from './dto/batch-import-activation-code.dto';
 import { ExportActivationCodeDto } from './dto/export-activation-code.dto';
 import { ActivationCodeParamsDto } from './dto/params-activation-code.dto';
 import { RefundActivationCodeDto } from './dto/refund-activation-code.dto';
 import { ResponseActivationCodeDto, ResponseSaveActivationCodeDto } from './dto/response-activation-code.dto';
 import { SaveActivationCodeDto } from './dto/save-activation-code.dto';
-import { ACTIVATION_CODE_TYPE } from './enums';
 
 @ApiTags('激活码管理')
 @ApiHeader({
@@ -135,7 +135,7 @@ export class ActivationCodeController {
    */
   @Post('batch-import')
   @ApiOperation({ summary: '批量导入激活码' })
-  batchImport(@Body() codes: { code: string; type: ACTIVATION_CODE_TYPE; dataDate: string }[]) {
+  batchImport(@Body() codes: BatchImportActivationCodeArrayDto) {
     return this.activationCodeService.batchImport(codes);
   }
 }

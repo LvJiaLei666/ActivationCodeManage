@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { Button, Popconfirm, Tag, Tooltip } from 'ant-design-vue';
 import dayjs from 'dayjs';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import SvgIcon from '@/components/custom/svg-icon.vue';
 import { UNIFORM_TEXT } from '@/enum';
@@ -12,6 +12,7 @@ import {
   activateActivationCode,
   delActivationCode,
   getActivationCodeList,
+  getAllCodeTypes,
   refundActivationCode,
   revokeActivationCode,
 } from '@/service/api';
@@ -22,33 +23,65 @@ import HeaderSearch from './modules/header-search.vue';
 import ImportDrawer from './modules/import-drawer.vue';
 import RefundModal from './modules/refund-modal.vue';
 
-// 激活码类型选项
-const activationCodeTypeOptions = [
-  { label: '1天KEY', value: 1 },
-  { label: '15天KEY', value: 15 },
-  { label: '30天KEY', value: 30 },
-  { label: '182天KEY', value: 182 },
-  { label: '365天KEY', value: 365 },
-];
-
 const { userInfo } = useAuthStore();
 
+// 激活码类型选项
+const activationCodeTypeOptions = ref<{ label: string; value: string; id: string }[]>([]);
+
+// 获取激活码类型列表
+const getCodeTypeOptions = async () => {
+  try {
+    const { data, error } = await getAllCodeTypes();
+    if (!error && data) {
+      activationCodeTypeOptions.value = data.records.map((item: Api.CodeType.CodeType) => ({
+        label: item.name,
+        value: item.id,
+        id: item.id,
+      }));
+    }
+  } catch (error) {
+    console.error('获取激活码类型失败:', error);
+  }
+};
+
 // 获取激活码类型标签颜色
-const getTypeTagColor = (type: number) => {
-  const colors: Record<number, string> = {
+const getTypeTagColor = (record: Api.ActivationCode.ActivationCode) => {
+  const colors = ['volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'purple'];
+
+  // 优先使用新的 typeId
+  if (record.typeId) {
+    const index = activationCodeTypeOptions.value.findIndex(opt => opt.id === record.typeId);
+    return colors[index % colors.length] || 'default';
+  }
+
+  // 回退到旧的 type 字段（兼容性）
+  const oldColors: Record<number, string> = {
     1: 'volcano',
     15: 'orange',
     30: 'gold',
     182: 'lime',
     365: 'green',
   };
-  return colors[type] || 'default';
+  return oldColors[record.type] || 'default';
 };
 
 // 获取激活码类型标签文本
-const getTypeTagText = (type: number) => {
-  const option = activationCodeTypeOptions.find(opt => opt.value === type);
-  return option?.label || `${type}天`;
+const getTypeTagText = (record: Api.ActivationCode.ActivationCode) => {
+  // 优先使用新的 typeId
+  if (record.typeId) {
+    const option = activationCodeTypeOptions.value.find(opt => opt.id === record.typeId);
+    return option?.label || '未知类型';
+  }
+
+  // 回退到旧的 type 字段（兼容性）
+  const oldTypeLabels: Record<number, string> = {
+    1: '1天KEY',
+    15: '15天KEY',
+    30: '30天KEY',
+    182: '182天KEY',
+    365: '365天KEY',
+  };
+  return oldTypeLabels[record.type] || `${record.type}天`;
 };
 
 const { tableWrapperRef, scrollConfig } = useTableScroll(1400);
@@ -101,9 +134,9 @@ const {
       title: '类型',
       align: 'center',
       width: 100,
-      customRender: ({ text }) => (
-        <Tag bordered={false} color={getTypeTagColor(text)}>
-          {getTypeTagText(text)}
+      customRender: ({ record }) => (
+        <Tag bordered={false} color={getTypeTagColor(record)}>
+          {getTypeTagText(record)}
         </Tag>
       ),
     },
@@ -365,6 +398,11 @@ const getRowClassName = (record: Api.ActivationCode.ActivationCode, _index: numb
   // 默认样式
   return '';
 };
+
+// 组件挂载时获取激活码类型
+onMounted(() => {
+  getCodeTypeOptions();
+});
 </script>
 
 <template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Button, DatePicker, Drawer, Form, message, Select, Textarea } from 'ant-design-vue';
+import { Button, DatePicker, Drawer, Form, message,Select,Textarea } from 'ant-design-vue';
 import dayjs from 'dayjs';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
-import { batchImportActivationCode } from '@/service/api';
+import { batchImportActivationCode, getAllCodeTypes } from '@/service/api';
 
 interface Emits {
   (e: 'success'): void;
@@ -22,17 +22,27 @@ defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // 激活码类型选项
-const activationCodeTypeOptions = [
-  { label: '1天KEY', value: 1 },
-  { label: '15天KEY', value: 15 },
-  { label: '30天KEY', value: 30 },
-  { label: '182天KEY', value: 182 },
-  { label: '365天KEY', value: 365 },
-];
+const activationCodeTypeOptions = ref<{ label: string; value: string; id: string }[]>([]);
+
+// 获取激活码类型列表
+const getCodeTypeOptions = async () => {
+  try {
+    const { data, error } = await getAllCodeTypes();
+    if (!error && data) {
+      activationCodeTypeOptions.value = data.records.map((item: Api.CodeType.CodeType) => ({
+        label: item.name,
+        value: item.id,
+        id: item.id,
+      }));
+    }
+  } catch (error) {
+    console.error('获取激活码类型失败:', error);
+  }
+};
 
 // 表单数据
 const formData = reactive({
-  type: undefined as Api.ActivationCode.ActivationCodeType | undefined,
+  typeId: undefined as string | undefined,
   dataDate: dayjs().format('YYYY-MM-DD'),
   codes: '',
 });
@@ -47,14 +57,14 @@ const handleClose = () => {
 
 // 重置表单
 const resetForm = () => {
-  formData.type = undefined;
+  formData.typeId = undefined;
   formData.dataDate = dayjs().format('YYYY-MM-DD');
   formData.codes = '';
 };
 
 // 提交导入
 const handleSubmit = async () => {
-  if (!formData.type) {
+  if (!formData.typeId) {
     message.error('请选择激活码类型');
     return;
   }
@@ -77,7 +87,7 @@ const handleSubmit = async () => {
 
   const batchData: Api.ActivationCode.BatchImportActivationCode = codeLines.map(code => ({
     code,
-    type: formData.type!,
+    typeId: formData.typeId!, // 使用新的 typeId 字段
     dataDate: formData.dataDate,
   }));
 
@@ -94,6 +104,11 @@ const handleSubmit = async () => {
     loading.value = false;
   }
 };
+
+// 组件挂载时获取激活码类型
+onMounted(() => {
+  getCodeTypeOptions();
+});
 </script>
 
 <template>
@@ -102,7 +117,7 @@ const handleSubmit = async () => {
       <Form label-width="100px">
         <!-- 选择类型 -->
         <Form.Item label="激活码类型" required>
-          <Select v-model:value="formData.type" placeholder="请选择激活码类型" :options="activationCodeTypeOptions" />
+          <Select v-model:value="formData.typeId" placeholder="请选择激活码类型" :options="activationCodeTypeOptions" />
         </Form.Item>
 
         <!-- 数据日期 -->
@@ -117,20 +132,16 @@ const handleSubmit = async () => {
         </Form.Item>
       </Form>
 
-      <div class="text-gray-500 text-sm">
+      <div class="text-sm text-gray-500">
         <div class="mb-8px">说明：</div>
         <div>• 每行输入一个激活码</div>
         <div>• 空行将被自动忽略</div>
         <div>• 请确保激活码格式正确</div>
       </div>
 
-      <div class="flex gap-12px justify-end">
-        <Button @click="handleClose">
-          取消
-        </Button>
-        <Button type="primary" :loading="loading" @click="handleSubmit">
-          导入
-        </Button>
+      <div class="flex justify-end gap-12px">
+        <Button @click="handleClose">取消</Button>
+        <Button type="primary" :loading="loading" @click="handleSubmit">导入</Button>
       </div>
     </div>
   </Drawer>

@@ -27,6 +27,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   administrative_message: () => import("@/views/administrative/message/index.vue"),
   administrative_organization: () => import("@/views/administrative/organization/index.vue"),
   "administrative_post-manage": () => import("@/views/administrative/post-manage/index.vue"),
+  "code-type": () => import("@/views/code-type/index.vue"),
   features_captcha: () => import("@/views/features/captcha/index.vue"),
   features_colorthief: () => import("@/views/features/colorthief/index.vue"),
   features_draggable: () => import("@/views/features/draggable/index.vue"),

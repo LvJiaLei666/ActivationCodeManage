@@ -223,7 +223,8 @@ declare namespace Api {
     /** @description: 激活码 */
     type ActivationCode = Common.CommonRecord<{
       code: string; // 激活码
-      type: ActivationCodeType; // 类型（激活天数）
+      type: ActivationCodeType; // 类型（激活天数，旧字段）
+      typeId?: string; // 新的类型ID（关联到ActivationCodeType表）
       importedAt: string; // 导入时间
       activated: boolean; // 是否已激活
       activatedAt: string | null; // 激活时间
@@ -236,7 +237,9 @@ declare namespace Api {
     }>;
 
     /** @description: 查询参数 */
-    type ActivationCodeSearchParams = Partial<Pick<ActivationCode, 'code' | 'type' | 'activated' | 'refunded' | 'revoked'>> & {
+    type ActivationCodeSearchParams = Partial<
+      Pick<ActivationCode, 'code' | 'type' | 'activated' | 'refunded' | 'revoked'>
+    > & {
       startDate?: string; // 开始日期
       endDate?: string; // 结束日期
     } & Api.Common.PaginatingParams;
@@ -247,7 +250,8 @@ declare namespace Api {
     /** @description: 批量导入激活码 */
     type BatchImportActivationCode = {
       code: string;
-      type: ActivationCodeType;
+      type?: ActivationCodeType; // 旧类型字段（向后兼容）
+      typeId?: string; // 新类型字段
       dataDate: string;
     }[];
 
@@ -320,5 +324,19 @@ declare namespace Api {
     /** @description: 创建/更新岗位 */
     type SavePostManage = Omit<PostManage, keyof Api.Common.ColumnFields | 'organization'> &
       Partial<Api.Common.ColumnId>;
+  }
+
+  /** @description: 激活码类型管理 */
+  namespace CodeType {
+    /** @description: 激活码类型 */
+    type CodeType = Common.CommonRecord<{
+      name: string; // 类型名称
+    }>;
+
+    /** @description: 查询参数 */
+    type CodeTypeSearchParams = Partial<Pick<CodeType, 'name'>> & Api.Common.PaginatingParams;
+
+    /** @description: 创建/更新激活码类型 */
+    type SaveCodeType = Pick<CodeType, 'name'> & Partial<Api.Common.ColumnId>;
   }
 }

@@ -20,9 +20,10 @@ import { MenuManageModule } from '@/modules/system-manage/menu-manage/menu-manag
 import { OperationLogModule } from '@/modules/system-manage/operation-log/operation-log.module'; // 系统管理 - 操作日志
 import { RoleManageModule } from '@/modules/system-manage/role-manage/role-manage.module'; // 系统管理 - 角色管理
 import { UserManageModule } from '@/modules/system-manage/user-manage/user-manage.module'; // 系统管理 - 用户管理
-import { ActivationCodeModule } from './modules/activation-code/activation-code.module';
 
 import winstonLogger from './config/winston.config';
+import { ActivationCodeModule } from './modules/activation-code/activation-code.module';
+import { CodeTypeModule } from './modules/code-type/code-type.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import winstonLogger from './config/winston.config';
     // 发布-订阅模块
     EventEmitterModule.forRoot(),
     ActivationCodeModule,
+    CodeTypeModule,
   ],
 })
 export class AppModule implements NestModule {

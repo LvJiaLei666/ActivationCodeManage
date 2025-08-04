@@ -28,6 +28,7 @@ declare module "@elegant-router/types" {
     "administrative_message-detail": "/administrative/message-detail/:id";
     "administrative_organization": "/administrative/organization";
     "administrative_post-manage": "/administrative/post-manage";
+    "code-type": "/code-type";
     "features": "/features";
     "features_captcha": "/features/captcha";
     "features_colorthief": "/features/colorthief";
@@ -89,6 +90,7 @@ declare module "@elegant-router/types" {
     | "about"
     | "activation-code"
     | "administrative"
+    | "code-type"
     | "features"
     | "home"
     | "iframe-page"
@@ -123,6 +125,7 @@ declare module "@elegant-router/types" {
     | "administrative_message"
     | "administrative_organization"
     | "administrative_post-manage"
+    | "code-type"
     | "features_captcha"
     | "features_colorthief"
     | "features_draggable"

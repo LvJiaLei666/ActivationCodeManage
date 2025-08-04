@@ -208,22 +208,31 @@ model Internalization {
 // 激活码管理
 
 model ActivationCode {
-  id           Int       @id @default(autoincrement()) // 自增主键ID
-  code         String    @unique                       // 激活码唯一字符串
-  type         Int                                     // 类型（激活天数）
-  importedAt   DateTime  @default(now())               // 导入时间
-  activated    Boolean   @default(false)               // 是否已激活
-  activatedAt  DateTime?                               // 激活时间（可为空）
-  refunded     Boolean   @default(false)               // 是否已退款
-  refundedAt   DateTime?                               // 退款时间（可为空）
-  refundNote   String?                                 // 退款备注（例如原因）
-  revoked      Boolean   @default(false)               // 是否已收回
-  revokedAt    DateTime?                               // 收回时间（可为空）
-  dataDate     DateTime?                               // 数据日期，用于数据归属时间
+  id           Int                @id @default(autoincrement()) // 自增主键ID
+  code         String             @unique                       // 激活码唯一字符串
+  type         Int                                              // 原激活码类型
+  typeId       String?                                          // 新激活码类型id
+  codeType     ActivationCodeType? @relation(fields: [typeId], references: [id]) // 关联激活码类型
+  importedAt   DateTime           @default(now())               // 导入时间
+  activated    Boolean            @default(false)               // 是否已激活
+  activatedAt  DateTime?                                        // 激活时间（可为空）
+  refunded     Boolean            @default(false)               // 是否已退款
+  refundedAt   DateTime?                                        // 退款时间（可为空）
+  refundNote   String?                                          // 退款备注（例如原因）
+  revoked      Boolean            @default(false)               // 是否已收回
+  revokedAt    DateTime?                                        // 收回时间（可为空）
+  dataDate     DateTime?                                        // 数据日期，用于数据归属时间
 
   @@index([type])
   @@index([dataDate])
   @@index([activated, refunded, revoked])
 }
 
+model ActivationCodeType {
+  id              String           @id @default(uuid()) // 主键
+  name            String           @unique // 类型名称（添加唯一约束）
+  activationCodes ActivationCode[] // 反向关联激活码
+  createdAt       DateTime         @default(now()) // 创建时间
+  updatedAt       DateTime         @updatedAt // 更新时间
+}
 
