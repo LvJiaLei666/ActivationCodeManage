@@ -190,15 +190,15 @@ const handleReset = () => {
           </AFormItem>
           <AFormItem>
             <ASpace>
-              <AButton type="primary" @click="handleSearch">
+              <AButton class="flex flex-center" type="primary" @click="handleSearch">
                 <template #icon>
-                  <SvgIcon icon="ic:baseline-search" />
+                  <SvgIcon class="mr-4px" icon="ic:baseline-search" />
                 </template>
                 搜索
               </AButton>
-              <AButton @click="handleReset">
+              <AButton class="flex flex-center" @click="handleReset">
                 <template #icon>
-                  <SvgIcon icon="ic:baseline-refresh" />
+                  <SvgIcon class="mr-4px" icon="ic:baseline-refresh" />
                 </template>
                 重置
               </AButton>
