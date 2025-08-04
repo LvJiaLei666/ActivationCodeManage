@@ -9,7 +9,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { type Menu, MenuType, Status, type User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { lastValueFrom, map } from 'rxjs';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -23,7 +23,7 @@ export class AuthService {
     private prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
-  ) { }
+  ) {}
   /**
    * @description: 用户登录
    */
