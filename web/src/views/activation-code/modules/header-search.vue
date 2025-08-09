@@ -56,6 +56,20 @@ const handleSearch = () => {
               @update:value="updateSearchParams({ typeId: $event as string })"
             />
           </Form.Item>
+
+          <!-- 是否已回收 -->
+          <Form.Item label="是否已回收" name="revoked">
+            <Select
+              :value="model.revoked === undefined ? undefined : String(model.revoked)"
+              placeholder="请选择回收状态"
+              allow-clear
+              :options="[
+                { label: '是', value: 'true' },
+                { label: '否', value: 'false' }
+              ]"
+              @update:value="updateSearchParams({ revoked: $event === undefined ? undefined : ($event === 'true') })"
+            />
+          </Form.Item>
         </div>
         <div class="flex gap-12px">
           <Button type="primary" ghost @click="handleSearch">

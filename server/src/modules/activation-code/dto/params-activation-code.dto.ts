@@ -52,7 +52,7 @@ export class ActivationCodeParamsDto {
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
-  revoked?: boolean;
+  revoked?: boolean | string;
 
   @ApiProperty({
     type: String,

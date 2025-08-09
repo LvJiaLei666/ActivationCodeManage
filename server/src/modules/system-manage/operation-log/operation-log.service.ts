@@ -26,7 +26,7 @@ export class OperationLogService {
     private readonly request: Request & { session: CommonType.SessionInfo },
     private prisma: PrismaService,
     private readonly httpService: HttpService,
-  ) { }
+  ) {}
 
   /**
    * @description: 获取用户真实ip
@@ -78,7 +78,7 @@ export class OperationLogService {
         location = await this.getLocationByIp(realIp);
       }
       const data: any = {
-        userId: userInfo.id,
+        userId: userInfo?.id,
         action: originalUrl,
         method: method.toUpperCase(),
         ip: realIp,

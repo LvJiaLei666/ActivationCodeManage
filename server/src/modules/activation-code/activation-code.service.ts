@@ -2,7 +2,7 @@
  * @Description: ActivationCodeService - 激活码管理
  */
 import { Injectable } from '@nestjs/common';
-import type { ActivationCode } from '@prisma/client';
+import type { ActivationCode, Prisma } from '@prisma/client';
 import * as XLSX from 'xlsx';
 
 import { RESPONSE_MSG } from '@/enums';
@@ -25,7 +25,7 @@ export class ActivationCodeService {
     const { code, typeId, activated, refunded, revoked, startDate, endDate, current = 1, size = 10 } = params;
 
     // 构建查询条件
-    const where: any = {};
+    const where: Prisma.ActivationCodeWhereInput = {};
 
     if (code) {
       where.code = { contains: code, mode: 'insensitive' };
@@ -45,7 +45,7 @@ export class ActivationCodeService {
     }
 
     if (revoked !== undefined) {
-      where.revoked = revoked;
+      where.revoked = revoked === 'true' ? true : revoked === 'false' ? false : false;
     }
 
     // 日期范围查询
