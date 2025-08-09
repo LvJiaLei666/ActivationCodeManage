@@ -112,6 +112,7 @@ const {
   apiParams: {
     code: undefined,
     type: undefined,
+    typeId: undefined,
     activated: undefined,
     refunded: undefined,
     revoked: undefined,
@@ -412,6 +413,7 @@ onMounted(() => {
       <HeaderSearch
         v-model:model="searchParams"
         :update-search-params="updateSearchParams"
+        :activation-code-type-options="activationCodeTypeOptions"
         @reset="resetSearchParams"
         @search="getDataByPage"
       />

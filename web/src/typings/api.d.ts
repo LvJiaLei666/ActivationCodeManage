@@ -240,6 +240,7 @@ declare namespace Api {
     type ActivationCodeSearchParams = Partial<
       Pick<ActivationCode, 'code' | 'type' | 'activated' | 'refunded' | 'revoked'>
     > & {
+      typeId?: string; // 新的类型ID筛选
       startDate?: string; // 开始日期
       endDate?: string; // 结束日期
     } & Api.Common.PaginatingParams;

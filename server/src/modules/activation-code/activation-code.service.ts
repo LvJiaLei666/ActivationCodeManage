@@ -22,7 +22,7 @@ export class ActivationCodeService {
    * @description: 查询激活码列表
    */
   async findAll(params: ActivationCodeParamsDto) {
-    const { code, type, activated, refunded, revoked, startDate, endDate, current = 1, size = 10 } = params;
+    const { code, typeId, activated, refunded, revoked, startDate, endDate, current = 1, size = 10 } = params;
 
     // 构建查询条件
     const where: any = {};
@@ -31,8 +31,9 @@ export class ActivationCodeService {
       where.code = { contains: code, mode: 'insensitive' };
     }
 
-    if (type) {
-      where.type = { equals: +type };
+    // 新的type
+    if (typeId) {
+      where.typeId = typeId;
     }
 
     if (activated !== undefined) {

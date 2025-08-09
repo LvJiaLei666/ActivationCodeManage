@@ -3,9 +3,7 @@
  */
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDateString, IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
-
-import { ACTIVATION_CODE_TYPE } from '../enums';
+import { IsBoolean, IsDateString, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class ActivationCodeParamsDto {
   @ApiProperty({
@@ -18,14 +16,13 @@ export class ActivationCodeParamsDto {
   code?: string;
 
   @ApiProperty({
-    enum: ACTIVATION_CODE_TYPE,
+    type: String,
     description: '类型（激活天数）',
     required: false,
   })
   @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsEnum(ACTIVATION_CODE_TYPE, { message: '类型必须是有效的激活码类型' })
-  type?: ACTIVATION_CODE_TYPE;
+  @IsUUID('all', { message: '类型必须是有效的激活码类型' })
+  typeId?: string;
 
   @ApiProperty({
     type: Boolean,
